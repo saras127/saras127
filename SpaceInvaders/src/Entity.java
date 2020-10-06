@@ -18,7 +18,7 @@
     protected Sprite sprite; // this entity's sprite
     protected double dx; // horizontal speed (px/s)  + -> right
     protected double dy; // vertical speed (px/s) + -> down
-    protected double floor = 560;
+    protected double floor = 500;
     protected boolean jumped = false;
     protected int[] fruitCount = new int[5];
     
@@ -37,6 +37,19 @@
        sprite = (SpriteStore.get()).getSprite(r);
      } // constructor
 
+     
+     public double setFloor(double f) {
+ 		floor = f;
+ 		return floor;
+ 	}
+ 	
+     
+     
+     
+     
+     
+     
+     
      /* move
       * input: delta - the amount of time passed in ms
       * output: none
@@ -49,17 +62,17 @@
        y += (delta * dy) / 1000;
      } // move
      
-     public void jump() {
+     public void jump(Entity s) {
     	 if (!jumped) {
-    		 y -= 50;
+    		 s.y -= 50;
     		 jumped = true;
     	 }
      }
      
-     public void fall() {
-    	 if(y < floor) {
-    		 y += 5;
-    	 } else if(y >= floor) {
+     public void fall(Entity s) {
+    	 if(s.y < floor) {
+    		 s.y += 5;
+    	 } else if(s.y >= floor) {
     		 jumped = false;
     	 }
      }

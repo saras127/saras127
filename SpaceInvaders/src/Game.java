@@ -3,10 +3,13 @@
  *
  */
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Game extends Canvas {
@@ -25,12 +28,14 @@ public class Game extends Canvas {
                                                       // in game
         private ArrayList removeEntities = new ArrayList(); // list of entities
                                                             // to remove this loop
-        private ImageIcon img = new ImageIcon("sprites/background.png");
-        private Image img2 = img.getImage();
-        		//img = Toolkit.getDefaultToolkit().createImage("E:\\);
+       
+        private int random = 1+(int)(Math.random()*3);
+        	
         private Entity ship;  // the ship
         private Entity fruit;
         private Entity platform;
+        private Entity platform2;
+       
         private double moveSpeed = 90; // hor. vel. of ship (px/s)
         private long lastFire = 0; // time last shot fired
         private long firingInterval = 300; // interval between shots (ms)
@@ -41,12 +46,13 @@ public class Game extends Canvas {
 
         private boolean logicRequiredThisLoop = false; // true if logic
                                                        // needs to be 
-                                                       // applied this loop
-
-        public void paint(Graphics g) {
-        	g.drawImage(img2, 0, 0, null);
-        }
+        											// applied this loop
         
+        private Image backgroundImage;
+        
+        
+      
+       
     	/*
     	 * Construct our game and set it running.
     	 */
@@ -54,10 +60,12 @@ public class Game extends Canvas {
     		// create a frame to contain game
     		//JFrame container = new JFrame("Commodore 64 Space Invaders");
     		JFrame container = new JFrame("Invaders of Space");
-    
+    		
     		// get hold the content of the frame
     		JPanel panel = (JPanel) container.getContentPane();
-    
+    		
+
+
     		// set up the resolution of the game
     		panel.setPreferredSize(new Dimension(800,600));
     		panel.setLayout(null);
@@ -109,14 +117,34 @@ public class Game extends Canvas {
     	 */
     	private void initEntities() {
               // create the ship and put in center of screen
-              platform = new PlatformEntity(this, "sprites/branch.png", 400, 500);
-              entities.add(platform);
+             
+            
+            switch(random) {
+            case 1: 
+            	  platform = new PlatformEntity(this, "sprites/branch.png", 300, 450);
+                  platform2 = new PlatformEntity(this, "sprites/branch.png", 400, 400);
+                  break;
+            case 2: 
+            	  platform = new PlatformEntity(this, "sprites/branch.png", 400, 450);
+                  platform2 = new PlatformEntity(this, "sprites/branch.png", 500, 400);
+                  break;
+            default:
+            	  platform = new PlatformEntity(this, "sprites/branch.png", 100, 450);
+                  platform2 = new PlatformEntity(this, "sprites/branch.png", 200, 400);
+            }
               
-              fruit = new OrangeEntity(this, "sprites/fruit.png", 500, 560);
-              entities.add(fruit);
               
-              ship = new ShipEntity(this, "sprites/ship2.png", 0, 560);
-              entities.add(ship);
+            entities.add(platform);
+            entities.add(platform2);
+              
+            fruit = new OrangeEntity(this, "sprites/fruit.png", 500, 560);
+            entities.add(fruit);
+            
+             ship = new ShipEntity(this, "sprites/coat.gif", 0, 500);
+             entities.add(ship);
+              
+              
+              /*
     
               // create a block of aliens (5x12)
               alienCount = 0;
@@ -130,7 +158,7 @@ public class Game extends Canvas {
                 } // for
               } // outer for
               
-              
+              */
               
               
               
@@ -215,6 +243,9 @@ public class Game extends Canvas {
 	 *           - updates game events
 	 *           - checks input
 	 */
+       
+  
+        
 	public void gameLoop() {
           long lastLoopTime = System.currentTimeMillis();
 
@@ -228,10 +259,14 @@ public class Game extends Canvas {
 
             // get graphics context for the accelerated surface and make it black
             Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-            //g.setColor(Color.gray);
-            g.drawImage(img2, 0, 0, null);
-            paint(g);
+           
+		
+            g.setBackground(Color.gray);
+            
+            
             g.fillRect(0,0,800,600);
+            
+            
 
             // move each entity
             if (!waitingForKeyPress) {
@@ -298,10 +333,8 @@ public class Game extends Canvas {
             }
             
             
-            ship.jump();
-            
-            	
-            ship.fall();
+            ship.jump(ship);
+            ship.fall(ship);
 
             // if spacebar pressed, try to fire
             if (firePressed) {
@@ -316,6 +349,7 @@ public class Game extends Canvas {
 	} // gameLoop
 
 
+	
         /* startGame
          * input: none
          * output: none
